@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "dactful",
+      "runtimeExecutable": ".venv/bin/python",
+      "runtimeArgs": ["run.py", "--no-browser"],
+      "port": 8000
+    }
+  ]
+}

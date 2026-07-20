@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dactful: local document redactor</title>
+  <link rel="stylesheet" href="/style.css" />
+</head>
+<body>
+  <div class="statusbar">
+    <span><span class="chev">&gt;&gt;&gt;</span> DACTFUL // LOCAL REDACTION TOOL</span>
+    <span class="status-right">
+      <button id="modeToggle" class="mode-toggle" type="button" aria-pressed="false">Mom and Dad mode: OFF</button>
+      <span class="status-node">NODE <span class="volt">127.0.0.1</span> · LOCAL-ONLY · BUILD 0.1.0</span>
+    </span>
+  </div>
+
+  <header class="topbar">
+    <div class="brand">
+      <span class="logo">D</span>
+      <div>
+        <h1>Dactful</h1>
+        <p class="tagline">Tactful redaction</p>
+      </div>
+    </div>
+    <nav class="tabs">
+      <button class="tab getstarted" data-tab="getstarted">Get Started</button>
+      <button class="tab active" data-tab="redact">Redact</button>
+      <button class="tab" data-tab="restore">Restore</button>
+      <button class="tab" data-tab="dictionary">Local Tag Dictionary</button>
+    </nav>
+  </header>
+
+  <main>
+    <!-- ============ GET STARTED (Mom and Dad mode only) ============ -->
+    <section id="tab-getstarted" class="tabpane">
+
+      <!-- Standard mode: for professionals -->
+      <div class="card guide guide-standard">
+        <h2>Welcome to Dactful</h2>
+        <p class="guide-lead">Get an AI's help on real docs without handing it your private information.</p>
+
+        <h3>1. Why it matters</h3>
+        <p>Tools like Gemini, ChatGPT, and Claude can retain and train on what you paste in unless you have explicitly opted out, and even then, sensitive details are best kept out of a third party's hands. Dactful lets you swap out the parts you would rather not share before you paste, so you keep the AI's usefulness without the exposure.</p>
+        <p><strong>To be clear, Dactful is not part of those tools and does not make them private. Anything you upload to an AI still travels over the internet and can be stored on its servers. Dactful only removes sensitive details from your text or document first, so you decide what actually leaves your machine.</strong></p>
+
+        <h3>2. How it works</h3>
+        <p>Say you want Gemini to sharpen your resume, but it lists your home address, personal email, and current employer.</p>
+        <ol class="guide-steps">
+          <li>Drop your resume into the <strong>Redact</strong> tab.</li>
+          <li>Dactful flags potentially sensitive information and lets you confirm what to hide. Add anything it missed.</li>
+          <li>You get a clean version where those details become neutral labels like <code>[[EMAIL_1]]</code> or <code>[[COMPANY_1]]</code>.</li>
+          <li>Paste that into Gemini and iterate freely. It never sees the real details.</li>
+          <li>When the wording is final, drop it into the <strong>Restore</strong> tab and Dactful swaps your real information back in, ready to use.</li>
+          <li>If you head back to Gemini to keep iterating, make sure you paste in a redacted version, not the restored one.</li>
+        </ol>
+
+        <h3>3. You're the ultimate reviewer of your data</h3>
+        <p>Dactful catches the obvious cases and the common patterns, but always skim the redacted copy before it leaves your machine.</p>
+      </div>
+
+      <!-- Mom and Dad mode: simple -->
+      <div class="card guide guide-simple">
+        <h2>Welcome to Dactful</h2>
+        <p class="guide-lead">Dactful lets you use AI chatbots (like Claude or ChatGPT) without handing over your private information.</p>
+
+        <h3>1. Why use this?</h3>
+        <p>AI chatbots can learn from what you type into them, unless you turn that setting off. And even when a company says your data is safe, it is not a good idea to paste in private things like your name, address, or account numbers. Dactful hides those first, so you still get the AI's help without giving away your details.</p>
+        <p><strong>Keep in mind: Dactful is not built into Claude, ChatGPT, or Gemini. Whatever you send to a chatbot still travels over the internet and can be stored on that company's computers. Dactful only takes the private details out of your document first, so you choose what actually gets sent.</strong></p>
+
+        <h3>2. How to use it</h3>
+        <p>Say you got a confusing power bill and you want Claude to explain it.</p>
+        <ol class="guide-steps">
+          <li>On the <strong>Redact</strong> tab, add your power bill.</li>
+          <li>Dactful points out potentially sensitive information, like your name and home address. Tick the ones you want to hide.</li>
+          <li>Press the button. You get a clean copy where those parts are swapped for labels like <code>[[PERSON_1]]</code>.</li>
+          <li>Give that clean copy to Claude and ask your questions. Claude never sees your real name or address.</li>
+          <li>When Claude replies, open the <strong>Restore</strong> tab, paste the reply, and Dactful puts your real details back to make it easy to read.</li>
+          <li>If you want to go back to Claude to keep asking questions, make sure you use a redacted version of your document.</li>
+        </ol>
+
+        <h3>3. Always double-check</h3>
+        <p>Before you send anything to an AI, read it over and make sure every private detail is truly gone. Dactful does the heavy lifting, but you are the final check.</p>
+
+        <div class="glossary">
+          <h3>A few words, explained</h3>
+          <p><strong>Redact:</strong> hide private information by swapping it for a label.</p>
+          <p><strong>Label (or tag):</strong> a stand-in like <code>[[PERSON_1]]</code> that takes the place of a real name or number.</p>
+          <p><strong>Restore:</strong> put your real information back once the AI is done.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ REDACT ============ -->
+    <section id="tab-redact" class="tabpane active">
+
+      <!-- Step 1: input -->
+      <div class="card" id="step-input">
+        <button class="ghost small card-restart" id="reviewRestartBtn" type="button">Start over</button>
+        <p class="kicker">1 // Redact</p>
+        <h2><span class="step-n">1</span> Add your document
+          <button class="info-i" type="button" aria-label="What does this do?" data-info="Dactful hides the private details in your document, like names and account numbers, so you have control over what you paste into an AI like Claude or ChatGPT. Redacting happens on this computer and doesn't involve taking data off this device. It's up to you what you do with it next.">i</button>
+        </h2>
+        <div class="dropzone" id="dropzone">
+          <p><strong>Drop a .docx, .pdf, or screenshot here</strong> or <label class="link" for="fileInput">choose a file</label></p>
+          <input type="file" id="fileInput" accept=".docx,.pdf,.png,.jpg,.jpeg,.webp,.tiff,.tif,.bmp,.gif,.heic" hidden />
+          <p class="muted small dropzone-note">Screenshots & images are read on-device (Apple Vision OCR); the image never leaves your Mac. PDF/image text is extracted into a plain Word doc.</p>
+        </div>
+        <div class="or">or paste text</div>
+        <textarea id="pasteBox" rows="5" placeholder="Paste text to redact…"></textarea>
+        <div class="options">
+          <label class="check"><input type="checkbox" id="optMoney" /> Also find dollar amounts</label>
+          <span class="check-info">
+            <label class="check"><input type="checkbox" id="optNer" checked /> Suggest names &amp; companies</label>
+            <button class="info-i" type="button" aria-label="What does this do?" data-info="When on, Dactful automatically looks for people's names and company names and suggests hiding them. You always decide what actually gets hidden.">i</button>
+          </span>
+          <span class="check-info">
+            <label class="check"><input type="checkbox" id="optRedactName" /> Redact file name</label>
+            <button class="info-i" type="button" aria-label="What does this do?" data-info="Select this if any sensitive information (like a name) is present in your file name. For example, timothée-chalamet-secret-recipe.docx downloads as redacted-job-12.docx instead.">i</button>
+          </span>
+        </div>
+        <div class="row">
+          <button class="primary" id="analyzeBtn">Scan for sensitive info</button>
+          <span id="analyzeStatus" class="muted small"></span>
+        </div>
+      </div>
+
+      <!-- Step 2/3: review -->
+      <div class="card hidden" id="step-review">
+        <h2><span class="step-n">2</span> Confirm what to redact
+          <button class="info-i" type="button" aria-label="What does this do?" data-info="Dactful looked through your document and found things that might be private. Tick the ones you want to hide. You're always in control.">i</button>
+        </h2>
+        <p class="muted small" id="reviewSummary"></p>
+        <div class="review-controls">
+          <input type="text" id="filterBox" placeholder="Filter…" class="filter" />
+          <button class="ghost small" id="checkAll">Select all</button>
+          <button class="ghost small" id="uncheckAll">Clear</button>
+          <span class="spacer"></span>
+          <span id="selCount" class="muted small"></span>
+        </div>
+        <div class="table-wrap">
+          <table id="reviewTable">
+            <thead>
+              <tr><th></th><th>Term</th><th>Type</th><th>Count</th><th>Replace with tag <button class="info-i" type="button" aria-label="What is a tag?" data-info="A tag is a stand-in label, like [[COMPANY_1]], that temporarily replaces a real name or number. The AI sees the tag instead of the real thing, and Dactful swaps the real info back in afterward.">i</button></th><th></th></tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+
+        <div class="add-term">
+          <h3>Add a term the scan missed</h3>
+          <div class="row">
+            <select id="addTermType" class="type-sel">
+              <option value="company">Company</option>
+              <option value="person">Person</option>
+              <option value="place">Place</option>
+              <option value="email">Email</option>
+              <option value="phone">Phone</option>
+              <option value="ssn">SSN</option>
+              <option value="other">Other</option>
+            </select>
+            <input type="text" id="addTermText" placeholder="Real value (e.g. Northwind Trading)" />
+            <input type="text" id="addTermTag" placeholder="tag (auto-filled)" />
+            <button class="ghost" id="addTermBtn">Add</button>
+          </div>
+          <p id="addTermPreview" class="muted small"></p>
+        </div>
+
+        <div class="review-images hidden" id="reviewImages">
+          <h3>Images in this document</h3>
+          <p class="muted small">Keep the ones the AI should see (like charts), drop anything private.
+            Kept images are added to your redacted document. Dactful hides text, not what is drawn inside
+            a picture, so review each one.</p>
+          <div class="img-grid" id="imgGrid"></div>
+        </div>
+
+        <div class="hazard"></div>
+        <div class="row between review-footer">
+          <span id="declineWarn" class="warn small"></span>
+          <button class="primary" id="redactBtn">Redact</button>
+        </div>
+      </div>
+
+      <!-- Step 4/5: results -->
+      <div class="card hidden" id="step-result">
+        <h2><span class="step-n">3</span> Done</h2>
+        <div id="resultBody"></div>
+        <div class="row">
+          <button class="ghost" id="redactRestartBtn" type="button">Redact another document</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ RESTORE ============ -->
+    <section id="tab-restore" class="tabpane">
+      <div class="card">
+        <button class="ghost small card-restart" id="restoreRestartBtn" type="button">Start over</button>
+        <p class="kicker">2 // Restore</p>
+        <h2><span class="step-n">2</span> Put the sensitive info back
+          <button class="info-i" type="button" aria-label="What does this do?" data-info="When your finished document comes back from the AI, drop it here. Dactful puts all the real names and numbers back in place of the tags, automatically.">i</button>
+        </h2>
+        <p class="muted">When your finished draft comes back from the AI, drop it here and click
+          Restore. Dactful puts your real information back automatically, and repairs any tags
+          the AI mangled.</p>
+
+        <h3 class="restore-step"><span class="step-n">A</span> Add your finished document or text</h3>
+        <div class="field">
+          <label>Your finished document (.docx)</label>
+          <input type="file" id="restoreDoc" accept=".docx" />
+        </div>
+        <div class="or">or paste your finished text</div>
+        <textarea id="restorePaste" rows="6" placeholder="Paste the finished text from your AI here…"></textarea>
+        <div class="restore-adv">
+          <details class="fallback">
+            <summary>Or use a mapping file instead</summary>
+            <p class="muted small">Only needed for a redaction made on another computer.</p>
+            <input type="file" id="restoreMap" accept=".json,application/json" />
+          </details>
+        </div>
+
+        <h3 class="restore-step"><span class="step-n">B</span> Put your information back</h3>
+        <div class="row">
+          <button class="primary" id="restoreBtn">Put my info back</button>
+          <span id="restoreStatus" class="muted small"></span>
+        </div>
+        <div id="restoreResult"></div>
+      </div>
+    </section>
+
+    <!-- ============ LOCAL TAG DICTIONARY ============ -->
+    <section id="tab-dictionary" class="tabpane">
+      <div class="card">
+        <p class="kicker">Dictionary</p>
+        <h2>Local tag dictionary
+          <button class="info-i" type="button" aria-label="What is this?" data-info="Dactful remembers the names and numbers you've hidden before and which tag it used, so next time it already knows what to hide. You can add, edit, or delete them here.">i</button>
+        </h2>
+        <p class="muted">These tags pre-fill your scans.</p>
+
+        <div class="storage-box">
+          <div class="storage-boxhead">
+            <span class="mono-label">Where should Dactful keep your tag dictionary?</span>
+            <span id="syncBadge" class="sync-badge"></span>
+          </div>
+          <p class="storage-now">Right now: <strong id="dictPathDisplay"></strong></p>
+
+          <ul class="storage-choice">
+            <li><strong>On this device</strong> (recommended). Kept in a folder on this Mac. It never
+              touches the internet.</li>
+            <li><strong>Cloud folder.</strong> Pick a synced folder (Dropbox, iCloud Drive, OneDrive) to
+              back it up and use it on your other computers. This copies it to that service, a deliberate
+              step outside staying fully local.</li>
+          </ul>
+
+          <div class="row storage-buttons">
+            <button class="ghost small hidden" id="dictBrowseBtn">Choose a folder…</button>
+            <button class="ghost small hidden" id="dictResetBtn">Keep on this device</button>
+          </div>
+
+          <p id="dictLocMsg" class="small"></p>
+
+          <div class="path-field" id="dictPathField">
+            <p class="muted small">Or paste a folder path (advanced):</p>
+            <div class="row">
+              <input type="text" id="dictFolderInput" placeholder="/Users/you/Library/Mobile Documents/com~apple~CloudDocs/Dactful" />
+              <button class="primary small" id="dictSaveLocBtn">Save</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="add-term">
+          <h3>Add a tag</h3>
+          <div class="row">
+            <select id="dictType" class="type-sel">
+              <option value="company">Company</option>
+              <option value="person">Person</option>
+              <option value="place">Place</option>
+              <option value="email">Email</option>
+              <option value="phone">Phone</option>
+              <option value="ssn">SSN</option>
+              <option value="other">Other</option>
+            </select>
+            <input type="text" id="dictTerm" placeholder="Real value (e.g. Acme Corp Inc)" />
+            <input type="text" id="dictTag" placeholder="Tag (auto-filled)" />
+            <button class="ghost" id="dictAddBtn">Add</button>
+          </div>
+          <p id="dictAddMsg" class="muted small"></p>
+        </div>
+
+        <div class="hazard"></div>
+
+        <div class="dict-head row between">
+          <span id="dictCount" class="mono-label"></span>
+        </div>
+        <div class="table-wrap">
+          <table id="dictTable">
+            <thead>
+              <tr><th>Real value</th><th>Tag</th><th>Source</th><th></th></tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+        <p id="dictEmpty" class="muted small"></p>
+      </div>
+    </section>
+  </main>
+
+  <!-- ============ IMAGE LIGHTBOX ============ -->
+  <div id="imgLightbox" class="lightbox hidden">
+    <img id="lightboxImg" alt="Enlarged image" />
+  </div>
+
+  <!-- ============ DELETE CONFIRMATION MODAL ============ -->
+  <div id="delModal" class="modal-overlay hidden">
+    <div class="modal">
+      <p class="kicker danger-kicker">⚠ Destructive // Irreversible</p>
+      <h2>Delete this tag?</h2>
+      <div class="modal-target">
+        <span class="map-tag" id="delTag"></span>
+        <span class="map-arrow">←</span>
+        <span class="map-val" id="delVal"></span>
+      </div>
+      <div class="modal-warn">
+        <p>Dactful will <strong>permanently forget</strong> that this tag stands for this value.
+          After this:</p>
+        <ul>
+          <li>It won't recognise this term in new documents.</li>
+          <li>It can no longer turn this tag back into the real value on its own.</li>
+        </ul>
+        <p class="small muted">Documents you've already redacted keep their own mapping file and are
+          not affected. This cannot be undone.</p>
+      </div>
+      <label class="del-label">Type <strong>DELETE</strong> to confirm</label>
+      <input type="text" id="delConfirmInput" autocomplete="off" placeholder="DELETE" />
+      <div class="row between modal-actions">
+        <button class="ghost" id="delCancel">Cancel</button>
+        <button class="danger" id="delConfirm" disabled>Delete forever</button>
+      </div>
+    </div>
+  </div>
+
+  <footer class="foot">
+    <div class="foot-disclaimer">Provided as-is, no warranty. Use your smart human brain and please double-check outputs before uploading to an LLM ❤️ 🤓</div>
+    <div class="foot-meta">
+      <span><span class="chev">&gt;&gt;&gt;</span> Dactful · an experiment of Verdant Industries LLC</span>
+      <span id="nerBadge" class="muted small"></span>
+    </div>
+  </footer>
+
+  <script src="/app.js"></script>
+</body>
+</html>

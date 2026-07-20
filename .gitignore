@@ -1,0 +1,12 @@
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+# PyInstaller output
+build/
+dist/
+.DS_Store
+# Never commit real sensitive artifacts
+*_redacted.docx
+*_mapping.txt
+*_mapping.json
